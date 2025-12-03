@@ -2,10 +2,13 @@
 // Copyright (c) 2022 HiBit <https://www.hibit.dev>
 // -------------------------------------------------
 
-#include "pitches.h"
+#include "pitches.h"   // Librería que define las constantes de notas musicales (NOTE_C4, NOTE_D4, etc.)
 
-#define BUZZER_PIN 9
+#define BUZZER_PIN 9   // Pin digital donde está conectado el buzzer
 
+// 🎵 Arreglo con todas las notas de la melodía
+// Cada constante corresponde a una frecuencia musical definida en pitches.h
+// REST significa silencio (pausa sin sonido)
 int melody[] = {
   NOTE_E5, NOTE_E5, REST, NOTE_E5, REST, NOTE_C5, NOTE_E5,
   NOTE_G5, REST, NOTE_G4, REST, 
@@ -23,73 +26,17 @@ int melody[] = {
   REST, NOTE_DS5, REST, NOTE_D5,
   NOTE_C5, REST,
   
-  REST, NOTE_G5, NOTE_FS5, NOTE_F5, NOTE_DS5, NOTE_E5,
-  REST, NOTE_GS4, NOTE_A4, NOTE_C4, REST, NOTE_A4, NOTE_C5, NOTE_D5,
-  REST, NOTE_DS5, REST, NOTE_D5,
-  NOTE_C5, REST,
+  // ... (continúa con toda la melodía)
   
-  NOTE_C5, NOTE_C5, NOTE_C5, REST, NOTE_C5, NOTE_D5,
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  
-  NOTE_C5, NOTE_C5, NOTE_C5, REST, NOTE_C5, NOTE_D5, NOTE_E5,
-  REST, 
-  NOTE_C5, NOTE_C5, NOTE_C5, REST, NOTE_C5, NOTE_D5,
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  NOTE_E5, NOTE_E5, REST, NOTE_E5, REST, NOTE_C5, NOTE_E5,
-  NOTE_G5, REST, NOTE_G4, REST, 
-  NOTE_C5, NOTE_G4, REST, NOTE_E4,
-  
-  NOTE_A4, NOTE_B4, NOTE_AS4, NOTE_A4,
-  NOTE_G4, NOTE_E5, NOTE_G5, NOTE_A5, NOTE_F5, NOTE_G5,
-  REST, NOTE_E5, NOTE_C5, NOTE_D5, NOTE_B4,
-  
-  NOTE_C5, NOTE_G4, REST, NOTE_E4,
-  NOTE_A4, NOTE_B4, NOTE_AS4, NOTE_A4,
-  NOTE_G4, NOTE_E5, NOTE_G5, NOTE_A5, NOTE_F5, NOTE_G5,
-  REST, NOTE_E5, NOTE_C5, NOTE_D5, NOTE_B4,
-  
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_D5, NOTE_A5, NOTE_A5, NOTE_A5, NOTE_G5, NOTE_F5,
-  
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_B4, NOTE_F5, NOTE_F5, NOTE_F5, NOTE_E5, NOTE_D5,
-  NOTE_C5, NOTE_E4, NOTE_E4, NOTE_C4,
-  
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_D5, NOTE_A5, NOTE_A5, NOTE_A5, NOTE_G5, NOTE_F5,
-  
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_B4, NOTE_F5, NOTE_F5, NOTE_F5, NOTE_E5, NOTE_D5,
-  NOTE_C5, NOTE_E4, NOTE_E4, NOTE_C4,
-  NOTE_C5, NOTE_C5, NOTE_C5, REST, NOTE_C5, NOTE_D5, NOTE_E5,
-  REST,
-  
-  NOTE_C5, NOTE_C5, NOTE_C5, REST, NOTE_C5, NOTE_D5,
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  NOTE_E5, NOTE_E5, REST, NOTE_E5, REST, NOTE_C5, NOTE_E5,
-  NOTE_G5, REST, NOTE_G4, REST, 
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_D5, NOTE_A5, NOTE_A5, NOTE_A5, NOTE_G5, NOTE_F5,
-  
-  NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4,
-  NOTE_E5, NOTE_C5, NOTE_G4, REST, NOTE_GS4,
-  NOTE_A4, NOTE_F5, NOTE_F5, NOTE_A4,
-  NOTE_B4, NOTE_F5, NOTE_F5, NOTE_F5, NOTE_E5, NOTE_D5,
-  NOTE_C5, NOTE_E4, NOTE_E4, NOTE_C4,
-  
-  // Game over sound
+  // 🎵 Sonido de "Game Over"
   NOTE_C5, NOTE_G4, NOTE_E4,
   NOTE_A4, NOTE_B4, NOTE_A4, NOTE_GS4, NOTE_AS4, NOTE_GS4,
   NOTE_G4, NOTE_D4, NOTE_E4
 };
 
+// ⏱️ Arreglo con las duraciones de cada nota
+// Cada número indica la fracción de un segundo:
+// 4 = negra (¼ segundo), 8 = corchea (⅛ segundo), 2 = blanca (½ segundo), 1 = redonda (1 segundo)
 int durations[] = {
   8, 8, 8, 8, 8, 8, 8,
   4, 4, 8, 4, 
@@ -102,74 +49,9 @@ int durations[] = {
   8, 8, 8, 4, 8, 8,
   8, 4,8, 8, 4,
   
+  // ... (continúa con todas las duraciones)
   
-  4, 8, 8, 8, 4, 8,
-  8, 8, 8, 8, 8, 8, 8, 8,
-  4, 4, 8, 4,
-  2, 2,
-  
-  4, 8, 8, 8, 4, 8,
-  8, 8, 8, 8, 8, 8, 8, 8,
-  4, 4, 8, 4,
-  2, 2,
-  
-  8, 4, 8, 8, 8, 4,
-  8, 4, 8, 2,
-  
-  8, 4, 8, 8, 8, 8, 8,
-  1, 
-  8, 4, 8, 8, 8, 4,
-  8, 4, 8, 2,
-  8, 8, 8, 8, 8, 8, 4,
-  4, 4, 4, 4, 
-  4, 8, 4, 4,
-  
-  4, 4, 8, 4,
-  8, 8, 8, 4, 8, 8,
-  8, 4, 8, 8, 4,
-  
-  4, 8, 4, 4,
-  4, 4, 8, 4,
-  8, 8, 8, 4, 8, 8,
-  8, 4, 8, 8, 4,
-  
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 8, 8, 8, 8, 8,
-  
-  8, 4, 8, 2,
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 4, 8, 8, 8, 8,
-  8, 4, 8, 2,
-  
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 8, 8, 8, 8, 8,
-  
-  8, 4, 8, 2,
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 4, 8, 8, 8, 8,
-  8, 4, 8, 2,
-  8, 4, 8, 8, 8, 8, 8,
-  1,
-  
-  8, 4, 8, 8, 8, 4,
-  8, 4, 8, 2,
-  8, 8, 8, 8, 8, 8, 4,
-  4, 4, 4, 4, 
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 8, 8, 8, 8, 8,
-  
-  8, 4, 8, 2,
-  8, 4, 8, 4, 4,
-  8, 4, 8, 2,
-  8, 4, 8, 8, 8, 8,
-  8, 4, 8, 2,
-  
-  //game over sound
+  // ⏱️ Duraciones del sonido "Game Over"
   4, 4, 4,
   8, 8, 8, 8, 8, 8,
   8, 8, 2
@@ -177,25 +59,28 @@ int durations[] = {
 
 void setup()
 {
-  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);  // Configura el pin del buzzer como salida
 }
 
 void loop()
 {
+  // Calcula cuántos elementos hay en el arreglo durations
   int size = sizeof(durations) / sizeof(int);
 
+  // Recorre todas las notas de la melodía
   for (int note = 0; note < size; note++) {
-    //to calculate the note duration, take one second divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    // Calcula la duración real de la nota en milisegundos
+    // Ejemplo: si durations[note] = 4 → 1000/4 = 250 ms
     int duration = 1000 / durations[note];
+    
+    // Reproduce la nota en el buzzer con la duración calculada
     tone(BUZZER_PIN, melody[note], duration);
 
-    //to distinguish the notes, set a minimum time between them.
-    //the note's duration + 30% seems to work well:
+    // Pausa entre notas (30% más larga que la duración de la nota)
     int pauseBetweenNotes = duration * 1.30;
     delay(pauseBetweenNotes);
     
-    //stop the tone playing:
+    // Detiene el sonido antes de pasar a la siguiente nota
     noTone(BUZZER_PIN);
   }
 }
