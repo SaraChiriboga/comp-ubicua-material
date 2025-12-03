@@ -1,8 +1,10 @@
-#include <Wire.h>
-#include <ACROBOTIC_SSD1306.h>
+#include <Wire.h> // Librería para comunicación I2C
+#include <ACROBOTIC_SSD1306.h>  // Librería para controlar pantallas OLED SSD1306
 
-unsigned char aux=0;
+unsigned char aux=0;  // Variable auxiliar para almacenar datos temporales
 
+// Array que contiene un bitmap (imagen) en memoria de programa (PROGMEM)
+// Cada valor hexadecimal representa un patrón de píxeles que se dibujará en la pantalla
 static unsigned char ACROBOT[] PROGMEM ={
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -108,36 +110,48 @@ static unsigned char ACROBOT[] PROGMEM ={
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00
 };
+
 void setup()
 {
-Serial.begin(9600);
-Wire.begin();
-oled.init(); // Initialze SSD1306 OLED
-oled.clearDisplay();
-oled.setTextXY(0,3); // Set cursor position, start
-oled.setFont(font5x7); //se puede cambiar
-oled.putString("Bienvenidos");// Clear screen
-oled.setTextXY(3,3);
-oled.setFont(font8x8);
-oled.putString(" ACROBOTIC");
-delay(2000);
-oled.drawBitmapd(ACROBOT,128,64);
-delay(2000);
-oled.clearDisplay();
-delay(2000);
-oled.clearDisplay();
-oled.setTextXY(4,0);
-oled.putString("U training IoT");
+    Serial.begin(9600);           // Inicializa la comunicación serial a 9600 baudios
+    Wire.begin();                 // Inicializa el bus I2C
+    oled.init();                  // Inicializa la pantalla OLED
+    oled.clearDisplay();          // Limpia la pantalla
+
+    oled.setTextXY(0,3);          // Posiciona el cursor en fila 0, columna 3
+    oled.setFont(font5x7);        // Selecciona fuente de 5x7 píxeles
+    oled.putString("Bienvenidos");// Muestra el texto "Bienvenidos"
+
+    oled.setTextXY(3,3);          // Posiciona el cursor en fila 3, columna 3
+    oled.setFont(font8x8);        // Cambia la fuente a 8x8 píxeles
+    oled.putString(" ACROBOTIC"); // Muestra el texto "ACROBOTIC"
+    delay(2000);                  // Espera 2 segundos
+
+    oled.drawBitmapd(ACROBOT,128,64); // Dibuja el bitmap definido en el array ACROBOT (128x64 píxeles)
+    delay(2000);                      // Espera 2 segundos
+
+    oled.clearDisplay();          // Limpia la pantalla
+    delay(2000);                  // Espera 2 segundos
+    oled.clearDisplay();          // Vuelve a limpiar la pantalla
+
+    oled.setTextXY(4,0);          // Posiciona el cursor en fila 4, columna 0
+    oled.putString("U training IoT"); // Muestra el texto "U training IoT"
 }
+
 void loop()
 {
-for (unsigned char j=0;j<=7;j++)
-{
-oled.setTextXY(j,0);
-for (unsigned char i=0;i<=127;i++)
-{
-aux=pgm_read_byte_near(ACROBOT+i+127*j+j);
-oled.sendData(aux);
-}
-}
+    // La pantalla OLED SSD1306 se organiza en 8 páginas (cada página = 8 filas de píxeles)
+    // y 128 columnas. Este bucle recorre toda la matriz de píxeles.
+    for (unsigned char j=0;j<=7;j++)   // Recorre las 8 páginas verticales
+    {
+        oled.setTextXY(j,0);           // Posiciona el cursor al inicio de cada página
+        for (unsigned char i=0;i<=127;i++) // Recorre las 128 columnas horizontales
+        {
+            // Lee un byte del array ACROBOT desde memoria de programa
+            aux=pgm_read_byte_near(ACROBOT+i+127*j+j);
+
+            // Envía ese byte a la pantalla OLED para dibujar el píxel correspondiente
+            oled.sendData(aux);
+        }
+    }
 }
