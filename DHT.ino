@@ -1,74 +1,83 @@
 // Example testing sketch for various DHT humidity/temperature sensors
 // Written by ladyada, public domain
+// Este sketch de ejemplo prueba sensores DHT (DHT11/DHT22/DHT21) y muestra lecturas por Serial.
 
 // REQUIRES the following Arduino libraries:
 // - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
 // - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
+// Requiere instalar las librerías indicadas para poder compilar y usar la clase DHT correctamente.
 
-#include "DHT.h"
+#include "DHT.h"  // Incluye la librería DHT de Adafruit, que provee la clase y métodos para leer el sensor.
 
-#define DHTPIN 15     // Digital pin connected to the DHT sensor
-// Feather HUZZAH ESP8266 note: use pins 3, 4, 5, 12, 13 or 14 --
-// Pin 15 can work but DHT must be disconnected during program upload.
+// Definición del pin digital al que se conecta el pin de datos del DHT.
+#define DHTPIN 15     // Pin digital conectado al sensor DHT.
+// Nota para Feather HUZZAH ESP8266: usar pines 3, 4, 5, 12, 13 o 14.
+// El pin 15 puede funcionar, pero el DHT debe desconectarse durante la carga del programa.
+// Esto es por el comportamiento de arranque del ESP8266 en ciertos pines.
 
-// Uncomment whatever type you're using!
-//#define DHTTYPE DHT11   // DHT 11
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+// Selección del tipo de sensor DHT.
+// Descomenta el que estés usando y deja comentados los demás.
+//#define DHTTYPE DHT11   // DHT 11 (sensor básico, menor precisión)
+#define DHTTYPE DHT22   // DHT 22 (AM2302), AM2321 (mayor precisión y rango)
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)
 
-// Connect pin 1 (on the left) of the sensor to +5V
-// NOTE: If using a board with 3.3V logic like an Arduino Due connect pin 1
-// to 3.3V instead of 5V!
-// Connect pin 2 of the sensor to whatever your DHTPIN is
-// Connect pin 3 (on the right) of the sensor to GROUND (if your sensor has 3 pins)
-// Connect pin 4 (on the right) of the sensor to GROUND and leave the pin 3 EMPTY (if your sensor has 4 pins)
-// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
+// Conexiones físicas recomendadas:
+// Conecta el pin 1 (izquierda) del sensor a +5V.
+// NOTA: Si usas una placa con lógica de 3.3V (p. ej., Arduino Due), conecta el pin 1 a 3.3V en lugar de 5V.
+// Conecta el pin 2 (datos) del sensor al pin definido por DHTPIN.
+// Conecta el pin 3 (derecha) del sensor a GND (si tu sensor tiene 3 pines).
+// Si tu sensor tiene 4 pines: conecta el pin 4 a GND y deja el pin 3 sin conectar.
+// Coloca una resistencia de 10K entre el pin 2 (datos) y el pin 1 (alimentación) como pull-up.
 
-// Initialize DHT sensor.
-// Note that older versions of this library took an optional third parameter to
-// tweak the timings for faster processors.  This parameter is no longer needed
-// as the current DHT reading algorithm adjusts itself to work on faster procs.
+// Inicialización del objeto DHT con el pin y el tipo de sensor configurados.
+// En versiones antiguas de la librería, se podía pasar un tercer parámetro para ajustar tiempos en procesadores rápidos.
+// Ya no es necesario: el algoritmo actual se autoajusta.
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println(F("DHTxx test!"));
+  Serial.begin(9600);           // Inicializa el puerto serial a 9600 baudios para depuración y salida de datos.
+  Serial.println(F("DHTxx test!")); // Imprime un mensaje inicial. F() almacena la cadena en flash (PROGMEM) para ahorrar RAM.
 
-  dht.begin();
+  dht.begin();                  // Inicializa el sensor DHT (configura tiempos y prepara la lectura).
 }
 
 void loop() {
-  // Wait a few seconds between measurements.
-  delay(2000);
+  // Espera unos segundos entre mediciones para respetar los tiempos del DHT.
+  delay(2000);                  // 2 segundos: el DHT es un sensor relativamente lento y no debe leerse demasiado seguido.
 
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  float f = dht.readTemperature(true);
+  // Leer temperatura y humedad toma ~250 ms.
+  // Las lecturas pueden ser hasta 2 segundos “antiguas” porque el sensor actualiza lentamente su valor interno.
+  float h = dht.readHumidity();         // Lee la humedad relativa (%) como float.
+  float t = dht.readTemperature();      // Lee temperatura en °C (por defecto).
+  float f = dht.readTemperature(true);  // Lee temperatura en °F (parámetro true indica Fahrenheit).
 
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
+  // Verifica si alguna lectura falló. dht.readXxx() retorna NAN si no pudo leer correctamente.
+  if (isnan(h) || isnan(t) || isnan(f)) { // isnan() comprueba si el float es “Not A Number”.
+    Serial.println(F("Failed to read from DHT sensor!")); // Reporta error y termina el ciclo actual.
+    return; // Sale del loop actual para volver a intentar en la siguiente iteración.
   }
 
-  // Compute heat index in Fahrenheit (the default)
+  // Calcula el índice de calor (sensación térmica) en °F usando temperatura en °F y humedad.
   float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
+  // Calcula el índice de calor en °C (tercer parámetro false indica que la temperatura está en °C).
   float hic = dht.computeHeatIndex(t, h, false);
 
-  //Serial.print(F("Humidity: "));
-  Serial.println(h);
-  Serial.println(t +'\n');
-  
-  /*Serial.print(F("°C "));
-  Serial.print(f);
-  Serial.print(F("°F  Heat index: "));
-  Serial.print(hic);
+  // Ejemplo de salida por Serial:
+  // Serial.print(F("Humidity: "));
+  Serial.println(h);            // Imprime la humedad en una línea (valor en %).
+
+  // ATENCIÓN: t + '\n' suma el código ASCII del salto de línea (10) al valor de temperatura;
+  // no agrega una nueva línea al texto. Para imprimir nueva línea, usa Serial.println(t) o Serial.println().
+  Serial.println(t + '\n');     // Imprime temperatura en °C, pero la operación + '\n' es probablemente no intencional.
+
+  // Bloque comentado con salida detallada:
+  /*
   Serial.print(F("°C "));
-  Serial.print(hif);
-  Serial.println(F("°F"));*/
+  Serial.print(f);              // Imprime temperatura en °F.
+  Serial.print(F("°F  Heat index: "));
+  Serial.print(hic);            // Imprime índice de calor en °C.
+  Serial.print(F("°C "));
+  Serial.print(hif);            // Imprime índice de calor en °F.
+  Serial.println(F("°F"));
+  */
 }
